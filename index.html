@@ -106,7 +106,7 @@
 
         function checkDifficulty() {
             if (score === 20 || score === 40) {
-                gameSpeed = Math.floor(gameSpeed * 0.95); // Riduzione della velocità del 5%
+                gameSpeed = Math.floor(gameSpeed * 0.98); // Riduzione della velocità del 2%
             }
             clearInterval(gameLoop);
             gameLoop = setInterval(drawGame, gameSpeed);
