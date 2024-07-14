@@ -35,7 +35,7 @@
         let dy = 0;
         let score = 0;
         let highScore = 0;
-        let gameSpeed = 24; // Velocità iniziale ridotta del 15%
+        let gameSpeed = 24;
         let gameLoop;
         let isPaused = false;
         let gameStarted = false;
@@ -51,19 +51,14 @@
                 return;
             }
 
-            // Desenha o jogador
             ctx.font = '20px Arial';
             ctx.fillText('👨‍🍳', player.x - 10, player.y + 10);
-
-            // Desenha a pizza
             ctx.fillText('🍕', pizza.x - 10, pizza.y + 10);
 
-            // Desenha a pontuação
             ctx.fillStyle = 'black';
             ctx.font = '16px Arial';
             ctx.fillText(`Pontuação: ${score} | Recorde: ${highScore}`, 10, 20);
 
-            // Desenha as instruções durante o jogo
             if (isMobile) {
                 ctx.fillText('Toque na tela para mover', 10, canvas.height - 40);
                 ctx.fillText('Toque 2x para pausar', 10, canvas.height - 20);
@@ -96,15 +91,13 @@
         function movePlayer() {
             player.x += dx;
             player.y += dy;
-
-            // Mantém o jogador dentro dos limites do canvas
             player.x = Math.max(10, Math.min(canvas.width - 10, player.x));
             player.y = Math.max(10, Math.min(canvas.height - 10, player.y));
         }
 
         function checkCollision() {
             const distance = Math.sqrt(Math.pow(player.x - pizza.x, 2) + Math.pow(player.y - pizza.y, 2));
-            if (distance < 15) {  // Raggio di collisione ridotto
+            if (distance < 15) {
                 score++;
                 if (score > highScore) {
                     highScore = score;
@@ -127,7 +120,14 @@
         }
 
         function increaseSpeed() {
-            gameSpeed = Math.max(5, gameSpeed - 1);
+            // Nuova funzione di aumento della velocità
+            if (score <= 10) {
+                gameSpeed = Math.max(15, 24 - score);
+            } else if (score <= 20) {
+                gameSpeed = Math.max(10, 15 - (score - 10) / 2);
+            } else {
+                gameSpeed = Math.max(8, 10 - (score - 20) / 5);
+            }
             clearInterval(gameLoop);
             gameLoop = setInterval(drawGame, gameSpeed);
         }
@@ -142,7 +142,7 @@
             player = { x: 200, y: 200, size: 20 };
             generatePizza();
             score = 0;
-            gameSpeed = 24; // Resetta la velocità iniziale
+            gameSpeed = 24;
             dx = 0;
             dy = 0;
             gameStarted = false;
