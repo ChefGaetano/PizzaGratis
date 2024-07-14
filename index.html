@@ -102,10 +102,8 @@
         }
 
         function checkDifficulty() {
-            if (score === 20) {
-                gameSpeed = Math.floor(gameSpeed * 0.8);
-            } else if (score === 40) {
-                gameSpeed = Math.floor(gameSpeed * 0.8);
+            if (score === 20 || score === 40) {
+                gameSpeed = Math.floor(gameSpeed * 0.9); // Riduzione del 10%
             }
             clearInterval(gameLoop);
             gameLoop = setInterval(drawGame, gameSpeed);
@@ -179,10 +177,11 @@
         function showInstructions() {
             const instructions = `
             Como jogar:
-            - Deslize na tela ou use as setas do teclado para mover o chapéu do chef.
+            - Deslize na tela ou use as setas do teclado para mover o mini chef.
             - Colete as fatias de pizza para marcar pontos.
             - A velocidade aumenta a cada 20 pontos.
-            - Tente bater seu próprio recorde!
+            - Tente bater seu próprio recorde!envie screenshot.
+            - WhatsApp 31 99380640 Mucuri Bahia Chef Gaetano.
             
             Divirta-se na Pizzaria Bella Napoli do Chef Gaetano!
             `;
