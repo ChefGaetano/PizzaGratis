@@ -31,18 +31,6 @@
             border: 2px solid black;
             text-align: center;
         }
-        #pauseScreen {
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 20px;
-            border: 2px solid black;
-            text-align: center;
-        }
     </style>
 </head>
 <body>
@@ -52,16 +40,12 @@
         <p id="finalScore">Pontuação: 0</p>
         <button onclick="resetGame()">Reiniciar</button>
     </div>
-    <div id="pauseScreen">
-        <h1>Gioco in Pausa</h1>
-    </div>
 
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const gameOverScreen = document.getElementById('gameOverScreen');
         const finalScore = document.getElementById('finalScore');
-        const pauseScreen = document.getElementById('pauseScreen');
 
         const ITEM_SIZE = 20;
         const BORDER_MARGIN = ITEM_SIZE / 2;
@@ -79,18 +63,10 @@
         let highScore = 0;
         let gameSpeed = 60;
         let gameLoop;
-        let isPaused = false;
         let gameStarted = false;
         let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
         function drawGame() {
-            if (isPaused) {
-                pauseScreen.style.display = 'block';
-                return;
-            } else {
-                pauseScreen.style.display = 'none';
-            }
-
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             if (!gameStarted) {
@@ -126,10 +102,10 @@
 
             if (isMobile) {
                 ctx.fillText('Deslize para mover', 10, canvas.height - 40);
-                ctx.fillText('Toque 2x per pausar', 10, canvas.height - 20);
+                ctx.fillText('WhatsApp 3199380640', 10, canvas.height - 20);
             } else {
                 ctx.fillText('Use as setas para mover', 10, canvas.height - 40);
-                ctx.fillText('Espaço per pausar', 10, canvas.height - 20);
+                ctx.fillText('WhatsApp 3199380640', 10, canvas.height - 20);
             }
 
             movePlayer();
@@ -143,13 +119,13 @@
             ctx.fillText('Jogo de Pizza do Chef Gaetano', 50, 150);
             ctx.font = '18px Arial';
             if (isMobile) {
-                ctx.fillText('Toque na tela per iniziare', 90, 200);
-                ctx.fillText('Deslize per muoverti', 110, 230);
-                ctx.fillText('Toque 2x per mettere in pausa', 130, 260);
+                ctx.fillText('Toque na tela para começar', 90, 200);
+                ctx.fillText('Deslize para mover', 110, 230);
+                ctx.fillText('WhatsApp 3199380640', 130, 260);
             } else {
-                ctx.fillText('Pressione ENTER per iniziare', 90, 200);
-                ctx.fillText('Usa le frecce per muoverti', 110, 230);
-                ctx.fillText('Spazio per mettere in pausa', 130, 260);
+                ctx.fillText('Pressione ENTER para começar', 90, 200);
+                ctx.fillText('Use as setas para mover', 110, 230);
+                ctx.fillText('WhatsApp 3199380640', 130, 260);
             }
         }
 
@@ -171,9 +147,7 @@
                 if (score > highScore) {
                     highScore = score;
                 }
-                if (score === 10 || (score > 10 && (score - 10) % 5 === 0)) {
-                    player.body.push({...player.body[player.body.length - 1]});
-                }
+                player.body.push({...player.body[player.body.length - 1]});
                 generatePizza();
                 increaseSpeed();
             }
@@ -293,9 +267,6 @@
                 case 'ArrowDown':
                     player.dx = 0;
                     player.dy = 2;
-                    break;
-                case ' ':
-                    isPaused = !isPaused;
                     break;
             }
         }
