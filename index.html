@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -41,18 +40,12 @@
         <p id="finalScore">Pontuação: 0</p>
         <button onclick="resetGame()">Reiniciar</button>
     </div>
-    <audio id="eatSound" src="https://www.soundjay.com/button/beep-07.wav"></audio>
-    <audio id="gameOverSound" src="https://www.soundjay.com/button/beep-10.wav"></audio>
-    <img id="pizzaImage" src="https://www.pngall.com/wp-content/uploads/2016/06/Pizza-Free-Download-PNG.png" style="display: none;">
 
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const gameOverScreen = document.getElementById('gameOverScreen');
         const finalScore = document.getElementById('finalScore');
-        const eatSound = document.getElementById('eatSound');
-        const gameOverSound = document.getElementById('gameOverSound');
-        const pizzaImage = document.getElementById('pizzaImage');
 
         const ITEM_SIZE = 20;
         let BORDER_MARGIN = ITEM_SIZE / 2;
@@ -106,7 +99,8 @@
             });
 
             // Disegna la pizza
-            drawPizza();
+            ctx.font = `${ITEM_SIZE}px Arial`;
+            ctx.fillText('🍕', pizza.x - ITEM_SIZE / 2, pizza.y + ITEM_SIZE / 2);
 
             ctx.fillStyle = 'black';
             ctx.font = '16px Arial';
@@ -164,7 +158,6 @@
                 }
                 generatePizza();
                 increaseSpeed();
-                eatSound.play();
             }
         }
 
@@ -194,7 +187,6 @@
 
         function gameOver() {
             clearInterval(gameLoop);
-            gameOverSound.play();
             finalScore.textContent = `Pontuação: ${score}`;
             gameOverScreen.style.display = 'block';
         }
@@ -222,10 +214,6 @@
             ctx.fillStyle = 'white';
             ctx.font = '24px Arial';
             ctx.fillText('Gioco in Pausa', 100, 200);
-        }
-
-        function drawPizza() {
-            ctx.drawImage(pizzaImage, pizza.x - ITEM_SIZE / 2, pizza.y - ITEM_SIZE / 2, ITEM_SIZE, ITEM_SIZE);
         }
 
         if (isMobile) {
