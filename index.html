@@ -34,7 +34,7 @@
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas"></canvas>
+    <canvas id="gameCanvas" width="400" height="400"></canvas>
     <div id="gameOverScreen">
         <h1>Game Over!</h1>
         <p id="finalScore">Pontuação: 0</p>
@@ -48,7 +48,7 @@
         const finalScore = document.getElementById('finalScore');
 
         const ITEM_SIZE = 20;
-        let BORDER_MARGIN = ITEM_SIZE / 2;
+        const BORDER_MARGIN = ITEM_SIZE / 2;
 
         let player = {
             x: 200,
@@ -68,10 +68,7 @@
         let isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
         function drawGame() {
-            if (isPaused) {
-                drawPauseScreen();
-                return;
-            }
+            if (isPaused) return;
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -108,10 +105,10 @@
 
             if (isMobile) {
                 ctx.fillText('Deslize para mover', 10, canvas.height - 40);
-                ctx.fillText('Toque 2x per pausar', 10, canvas.height - 20);
+                ctx.fillText('Toque 2x para pausar', 10, canvas.height - 20);
             } else {
                 ctx.fillText('Use as setas para mover', 10, canvas.height - 40);
-                ctx.fillText('Espaço per pausar', 10, canvas.height - 20);
+                ctx.fillText('Espaço para pausar', 10, canvas.height - 20);
             }
 
             movePlayer();
@@ -125,13 +122,13 @@
             ctx.fillText('Jogo de Pizza do Chef Gaetano', 50, 150);
             ctx.font = '18px Arial';
             if (isMobile) {
-                ctx.fillText('Toque na tela per iniziare', 90, 200);
-                ctx.fillText('Deslize per muoverti', 110, 230);
-                ctx.fillText('Toque 2x per mettere in pausa', 130, 260);
+                ctx.fillText('Toque na tela para começar', 90, 200);
+                ctx.fillText('Deslize para mover', 110, 230);
+                ctx.fillText('Toque 2x para pausar', 130, 260);
             } else {
-                ctx.fillText('Pressione ENTER per iniziare', 90, 200);
-                ctx.fillText('Usa le frecce per muoverti', 110, 230);
-                ctx.fillText('Spazio per mettere in pausa', 130, 260);
+                ctx.fillText('Pressione ENTER para começar', 90, 200);
+                ctx.fillText('Use as setas para mover', 110, 230);
+                ctx.fillText('Espaço para pausar', 130, 260);
             }
         }
 
@@ -208,14 +205,6 @@
             gameLoop = setInterval(drawGame, gameSpeed);
         }
 
-        function drawPauseScreen() {
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = 'white';
-            ctx.font = '24px Arial';
-            ctx.fillText('Gioco in Pausa', 100, 200);
-        }
-
         if (isMobile) {
             canvas.addEventListener('touchstart', handleTouchStart);
             canvas.addEventListener('touchmove', handleTouchMove);
@@ -289,15 +278,6 @@
                     break;
             }
         }
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-            BORDER_MARGIN = ITEM_SIZE / 2;
-        }
-
-        window.addEventListener('resize', resizeCanvas);
-        resizeCanvas();
 
         resetGame();
     </script>
