@@ -20,14 +20,35 @@
             max-width: 100%;
             max-height: 100%;
         }
+        .hidden {
+            display: none;
+        }
+        #gameOverScreen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body>
     <canvas id="gameCanvas" width="400" height="400"></canvas>
+    <div id="gameOverScreen" class="hidden">
+        <h1>Game Over!</h1>
+        <p id="finalScore">Pontuação: 0</p>
+        <button onclick="resetGame()">Reiniciar</button>
+    </div>
 
     <script>
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
+        const gameOverScreen = document.getElementById('gameOverScreen');
+        const finalScore = document.getElementById('finalScore');
 
         const ITEM_SIZE = 20;
         const BORDER_MARGIN = ITEM_SIZE / 2;
@@ -62,19 +83,19 @@
             // Disegna la bandiera italiana (corpo del giocatore)
             player.body.forEach((segment, index) => {
                 ctx.fillStyle = '#009C3B'; // Verde
-ctx.fillRect(segment.x - ITEM_SIZE / 2, segment.y - ITEM_SIZE / 2, ITEM_SIZE, ITEM_SIZE);
-ctx.fillStyle = '#FFDF00'; // Giallo
-ctx.beginPath();
-ctx.moveTo(segment.x, segment.y - ITEM_SIZE / 4);
-ctx.lineTo(segment.x + ITEM_SIZE / 2, segment.y);
-ctx.lineTo(segment.x, segment.y + ITEM_SIZE / 4);
-ctx.lineTo(segment.x - ITEM_SIZE / 2, segment.y);
-ctx.closePath();
-ctx.fill();
-ctx.fillStyle = '#002776'; // Blu
-ctx.beginPath();
-ctx.arc(segment.x, segment.y, ITEM_SIZE / 4, 0, 2 * Math.PI);
-ctx.fill();
+                ctx.fillRect(segment.x - ITEM_SIZE / 2, segment.y - ITEM_SIZE / 2, ITEM_SIZE, ITEM_SIZE);
+                ctx.fillStyle = '#FFDF00'; // Giallo
+                ctx.beginPath();
+                ctx.moveTo(segment.x, segment.y - ITEM_SIZE / 4);
+                ctx.lineTo(segment.x + ITEM_SIZE / 2, segment.y);
+                ctx.lineTo(segment.x, segment.y + ITEM_SIZE / 4);
+                ctx.lineTo(segment.x - ITEM_SIZE / 2, segment.y);
+                ctx.closePath();
+                ctx.fill();
+                ctx.fillStyle = '#002776'; // Blu
+                ctx.beginPath();
+                ctx.arc(segment.x, segment.y, ITEM_SIZE / 4, 0, 2 * Math.PI);
+                ctx.fill();
             });
 
             // Disegna la pizza
@@ -158,7 +179,7 @@ ctx.fill();
             } else if (score <= 20) {
                 gameSpeed = Math.max(10, 20 - (score - 10) / 2);
             } else {
-                gameSpeed = Math.max(00, 10 - (score - 20) / 5);
+                gameSpeed = Math.max(0, 10 - (score - 20) / 5);
             }
             clearInterval(gameLoop);
             gameLoop = setInterval(drawGame, gameSpeed);
@@ -166,101 +187,9 @@ ctx.fill();
 
         function gameOver() {
             clearInterval(gameLoop);
-            alert(`Game Over! Pontuação: ${score}`);
-            resetGame();
+            finalScore.textContent = `Pontuação: ${score}`;
+            gameOverScreen.classList.remove('hidden');
         }
 
         function resetGame() {
-            player = {
-                x: 200,
-                y: 200,
-                size: ITEM_SIZE,
-                body: [{x: 200, y: 200}],
-                dx: 0,
-                dy: 0
-            };
-            generatePizza();
-            score = 0;
-            gameSpeed = 60;
-            gameStarted = false;
-            gameLoop = setInterval(drawGame, gameSpeed);
-        }
-
-        if (isMobile) {
-            canvas.addEventListener('touchstart', handleTouchStart);
-            canvas.addEventListener('touchmove', handleTouchMove);
-        } else {
-            document.addEventListener('keydown', handleKeyDown);
-        }
-
-        let touchStartX, touchStartY;
-
-        function handleTouchStart(e) {
-            e.preventDefault();
-            if (!gameStarted) {
-                gameStarted = true;
-                return;
-            }
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-        }
-
-        function handleTouchMove(e) {
-            e.preventDefault();
-            if (!touchStartX || !touchStartY) {
-                return;
-            }
-
-            let touchEndX = e.touches[0].clientX;
-            let touchEndY = e.touches[0].clientY;
-
-            let dx = touchEndX - touchStartX;
-            let dy = touchEndY - touchStartY;
-
-            if (Math.abs(dx) > Math.abs(dy)) {
-                // Movimento orizzontale
-                player.dx = dx > 0 ? 2 : -2;
-                player.dy = 0;
-            } else {
-                // Movimento verticale
-                player.dx = 0;
-                player.dy = dy > 0 ? 2 : -2;
-            }
-
-            touchStartX = touchEndX;
-            touchStartY = touchEndY;
-        }
-
-        function handleKeyDown(e) {
-            if (!gameStarted && e.key === 'Enter') {
-                gameStarted = true;
-                return;
-            }
-
-            switch(e.key) {
-                case 'ArrowLeft':
-                    player.dx = -2;
-                    player.dy = 0;
-                    break;
-                case 'ArrowRight':
-                    player.dx = 2;
-                    player.dy = 0;
-                    break;
-                case 'ArrowUp':
-                    player.dx = 0;
-                    player.dy = -2;
-                    break;
-                case 'ArrowDown':
-                    player.dx = 0;
-                    player.dy = 2;
-                    break;
-                case ' ':
-                    isPaused = !isPaused;
-                    break;
-            }
-        }
-
-        resetGame();
-    </script>
-</body>
-</html>
+            gameOverScreen.classList.add
