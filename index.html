@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo de Pizza do Chef Gaetano</title>
+    <title>Jogo de Pizza do Chef Gaetano WhatsApp 3199380640</title>
     <style>
         body {
             display: flex;
@@ -36,11 +36,11 @@
             x: 200,
             y: 200,
             size: ITEM_SIZE,
-            body: [{x: 200, y: 200}]
+            body: [{x: 200, y: 200}],
+            dx: 0,
+            dy: 0
         };
         let pizza = { x: 100, y: 100, size: ITEM_SIZE };
-        let dx = 0;
-        let dy = 0;
         let score = 0;
         let highScore = 0;
         let gameSpeed = 60;
@@ -61,12 +61,20 @@
 
             // Disegna la bandiera italiana (corpo del giocatore)
             player.body.forEach((segment, index) => {
-                ctx.fillStyle = '#009246'; // Verde
-                ctx.fillRect(segment.x - ITEM_SIZE / 2, segment.y - ITEM_SIZE / 2, ITEM_SIZE / 3, ITEM_SIZE);
-                ctx.fillStyle = '#FFFFFF'; // Bianco
-                ctx.fillRect(segment.x - ITEM_SIZE / 6, segment.y - ITEM_SIZE / 2, ITEM_SIZE / 3, ITEM_SIZE);
-                ctx.fillStyle = '#CE2B37'; // Rosso
-                ctx.fillRect(segment.x + ITEM_SIZE / 6, segment.y - ITEM_SIZE / 2, ITEM_SIZE / 3, ITEM_SIZE);
+                ctx.fillStyle = '#009C3B'; // Verde
+ctx.fillRect(segment.x - ITEM_SIZE / 2, segment.y - ITEM_SIZE / 2, ITEM_SIZE, ITEM_SIZE);
+ctx.fillStyle = '#FFDF00'; // Giallo
+ctx.beginPath();
+ctx.moveTo(segment.x, segment.y - ITEM_SIZE / 4);
+ctx.lineTo(segment.x + ITEM_SIZE / 2, segment.y);
+ctx.lineTo(segment.x, segment.y + ITEM_SIZE / 4);
+ctx.lineTo(segment.x - ITEM_SIZE / 2, segment.y);
+ctx.closePath();
+ctx.fill();
+ctx.fillStyle = '#002776'; // Blu
+ctx.beginPath();
+ctx.arc(segment.x, segment.y, ITEM_SIZE / 4, 0, 2 * Math.PI);
+ctx.fill();
             });
 
             // Disegna la pizza
@@ -78,7 +86,7 @@
             ctx.fillText(`Pontuação: ${score} | Recorde: ${highScore}`, 10, 20);
 
             if (isMobile) {
-                ctx.fillText('Toque na tela para mover', 10, canvas.height - 40);
+                ctx.fillText('Deslize para mover', 10, canvas.height - 40);
                 ctx.fillText('Toque 2x para pausar', 10, canvas.height - 20);
             } else {
                 ctx.fillText('Use as setas para mover', 10, canvas.height - 40);
@@ -97,7 +105,7 @@
             ctx.font = '18px Arial';
             if (isMobile) {
                 ctx.fillText('Toque na tela para começar', 90, 200);
-                ctx.fillText('Toque na tela para mover', 110, 230);
+                ctx.fillText('Deslize para mover', 110, 230);
                 ctx.fillText('Toque 2x para pausar', 130, 260);
             } else {
                 ctx.fillText('Pressione ENTER para começar', 90, 200);
@@ -107,25 +115,14 @@
         }
 
         function movePlayer() {
-            // Muove il corpo
+            player.x += player.dx;
+            player.y += player.dy;
+
+            // Aggiorna il corpo
+            player.body[0] = {x: player.x, y: player.y};
             for (let i = player.body.length - 1; i > 0; i--) {
-                player.body[i].x = player.body[i-1].x;
-                player.body[i].y = player.body[i-1].y;
+                player.body[i] = {...player.body[i-1]};
             }
-
-            // Muove la testa
-            player.body[0].x += dx;
-            player.body[0].y += dy;
-
-            // Aggiorna la posizione del giocatore
-            player.x = player.body[0].x;
-            player.y = player.body[0].y;
-
-            // Mantieni il giocatore all'interno dei bordi
-            player.x = Math.max(BORDER_MARGIN, Math.min(canvas.width - BORDER_MARGIN, player.x));
-            player.y = Math.max(BORDER_MARGIN, Math.min(canvas.height - BORDER_MARGIN, player.y));
-            player.body[0].x = player.x;
-            player.body[0].y = player.y;
         }
 
         function checkCollision() {
@@ -157,11 +154,11 @@
 
         function increaseSpeed() {
             if (score <= 10) {
-                gameSpeed = Math.max(50, 60 - score);
+                gameSpeed = Math.max(20, 30 - score);
             } else if (score <= 20) {
-                gameSpeed = Math.max(40, 50 - (score - 10) / 2);
+                gameSpeed = Math.max(10, 20 - (score - 10) / 2);
             } else {
-                gameSpeed = Math.max(30, 40 - (score - 20) / 5);
+                gameSpeed = Math.max(00, 10 - (score - 20) / 5);
             }
             clearInterval(gameLoop);
             gameLoop = setInterval(drawGame, gameSpeed);
@@ -178,50 +175,60 @@
                 x: 200,
                 y: 200,
                 size: ITEM_SIZE,
-                body: [{x: 200, y: 200}]
+                body: [{x: 200, y: 200}],
+                dx: 0,
+                dy: 0
             };
             generatePizza();
             score = 0;
             gameSpeed = 60;
-            dx = 0;
-            dy = 0;
             gameStarted = false;
             gameLoop = setInterval(drawGame, gameSpeed);
         }
 
         if (isMobile) {
-            canvas.addEventListener('touchstart', handleTouch);
+            canvas.addEventListener('touchstart', handleTouchStart);
             canvas.addEventListener('touchmove', handleTouchMove);
         } else {
             document.addEventListener('keydown', handleKeyDown);
         }
 
-        function handleTouch(e) {
+        let touchStartX, touchStartY;
+
+        function handleTouchStart(e) {
             e.preventDefault();
             if (!gameStarted) {
                 gameStarted = true;
                 return;
             }
-            const rect = canvas.getBoundingClientRect();
-            const touchX = e.touches[0].clientX - rect.left;
-            const touchY = e.touches[0].clientY - rect.top;
-            
-            const diffX = touchX - player.x;
-            const diffY = touchY - player.y;
-            
-            if (Math.abs(diffX) > Math.abs(diffY)) {
-                // Movimento orizzontale
-                dx = diffX > 0 ? 5 : -5;
-                dy = 0;
-            } else {
-                // Movimento verticale
-                dx = 0;
-                dy = diffY > 0 ? 5 : -5;
-            }
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
         }
 
         function handleTouchMove(e) {
             e.preventDefault();
+            if (!touchStartX || !touchStartY) {
+                return;
+            }
+
+            let touchEndX = e.touches[0].clientX;
+            let touchEndY = e.touches[0].clientY;
+
+            let dx = touchEndX - touchStartX;
+            let dy = touchEndY - touchStartY;
+
+            if (Math.abs(dx) > Math.abs(dy)) {
+                // Movimento orizzontale
+                player.dx = dx > 0 ? 2 : -2;
+                player.dy = 0;
+            } else {
+                // Movimento verticale
+                player.dx = 0;
+                player.dy = dy > 0 ? 2 : -2;
+            }
+
+            touchStartX = touchEndX;
+            touchStartY = touchEndY;
         }
 
         function handleKeyDown(e) {
@@ -232,20 +239,20 @@
 
             switch(e.key) {
                 case 'ArrowLeft':
-                    dx = -5;
-                    dy = 0;
+                    player.dx = -2;
+                    player.dy = 0;
                     break;
                 case 'ArrowRight':
-                    dx = 5;
-                    dy = 0;
+                    player.dx = 2;
+                    player.dy = 0;
                     break;
                 case 'ArrowUp':
-                    dx = 0;
-                    dy = -5;
+                    player.dx = 0;
+                    player.dy = -2;
                     break;
                 case 'ArrowDown':
-                    dx = 0;
-                    dy = 5;
+                    player.dx = 0;
+                    player.dy = 2;
                     break;
                 case ' ':
                     isPaused = !isPaused;
