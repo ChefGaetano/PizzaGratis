@@ -182,20 +182,20 @@
 
         function generatePizza() {
             food.x = Math.random() * (c.width - 2 * b) + b;
-            food.y = Math.random() * (c.height - 2 * b) + b;
+            food.y = Math.random * (c.height - 2 * b) + b;
         }
 
         function increaseSpeed() {
             if (sc <= 10) {
-                spd = 60 - (sc * 3); // Scala 1-2 (da 60 a 50 ms)
+                spd = 60 - (sc * 2); // Scala 1-2 (da 60 a 40 ms)
             } else if (sc <= 20) {
-                spd = 50 - ((sc - 10) * 5); // Scala 3-4 (da 50 a 30 ms)
+                spd = 40 - ((sc - 10) * 1); // Scala 3-4 (da 40 a 30 ms)
             } else if (sc <= 30) {
-                spd = 30 - ((sc - 20) * 5); // Scala 5-6 (da 30 a 20 ms)
+                spd = 30 - ((sc - 20) * 1); // Scala 5-6 (da 30 a 20 ms)
             } else {
-                spd = 20 - ((sc - 30) * 5); // Scala 7-9 (da 20 a 5 ms)
+                spd = 20 - ((sc - 30) * 1); // Scala 7-9 (da 20 a 10 ms)
             }
-            spd = Math.max(5, spd); // Assicurati che la velocità non scenda sotto 5 ms
+            spd = Math.max(10, spd); // Assicurati che la velocità non scenda sotto 10 ms
             clearInterval(gl);
             gl = setInterval(drawGame, spd);
         }
