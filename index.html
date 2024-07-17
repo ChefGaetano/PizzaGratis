@@ -174,14 +174,15 @@
 
         function increaseSpeed() {
             if (sc <= 10) {
-                spd = Math.max(20, 30 - sc);
+                spd = 60 - (sc * 3); // Scala 1-2 (da 60 a 50 ms)
             } else if (sc <= 20) {
-                spd = Math.max(10, 20 - (sc - 10) / 2);
+                spd = 50 - ((sc - 10) * 5); // Scala 3-4 (da 50 a 30 ms)
             } else if (sc <= 30) {
-                spd = Math.max(5, 15 - (sc - 20) / 2); // Diluire tra 20 e 30 punti
+                spd = 30 - ((sc - 20) * 5); // Scala 5-6 (da 30 a 20 ms)
             } else {
-                spd = Math.max(1, 10 - (sc - 30) / 2); // Diluire oltre 30 punti
+                spd = 20 - ((sc - 30) * 5); // Scala 7-9 (da 20 a 5 ms)
             }
+            spd = Math.max(5, spd); // Assicurati che la velocità non scenda sotto 5 ms
             clearInterval(gl);
             gl = setInterval(drawGame, spd);
         }
@@ -195,12 +196,12 @@
         function resetGame() {
             p = {
                 x: 200,
-            y: 200,
-            sz: s,
-            bd: [{x: 200, y: 200}],
-            dx: 0,
-            dy: 0
-        };
+                y: 200,
+                sz: s,
+                bd: [{x: 200, y: 200}],
+                dx: 0,
+                dy: 0
+            };
             food = { x: 100, y: 100, sz: s };
             sc = 0;
             spd = 60;
