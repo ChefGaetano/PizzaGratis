@@ -69,6 +69,16 @@
 
         restartButton.addEventListener('click', resetGame);
 
+        // Caricamento delle immagini
+        const playerImg = new Image();
+        playerImg.src = 'brazil.png'; // Assicurati di avere questo file
+
+        const italianFlagImg = new Image();
+        italianFlagImg.src = 'italy.png'; // Assicurati di avere questo file
+
+        const pizzaImg = new Image();
+        pizzaImg.src = 'pizza.png';
+
         // Caricamento degli effetti sonori
         const eatSound = new Audio('eat.mp3');
         const bgMusic = new Audio('background.mp3');
@@ -87,14 +97,17 @@
                 return;
             }
 
-            // Disegna il giocatore utilizzando emoji
-            ctx.font = `${s}px Arial`;
+            // Disegna il giocatore utilizzando le immagini
             p.bd.forEach((seg, idx) => {
-                ctx.fillText('🇧🇷', seg.x - s / 2, seg.y + s / 2);
+                if (seg.isItalian) {
+                    ctx.drawImage(italianFlagImg, seg.x - s / 2, seg.y - s / 2, s, s);
+                } else {
+                    ctx.drawImage(playerImg, seg.x - s / 2, seg.y - s / 2, s, s);
+                }
             });
 
-            // Disegna la pizza utilizzando emoji
-            ctx.fillText('🍕', food.x - s / 2, food.y + s / 2);
+            // Disegna la pizza utilizzando le immagini
+            ctx.drawImage(pizzaImg, food.x - s / 2, food.y - s / 2, s, s);
 
             ctx.fillStyle = 'black';
             ctx.font = '16px Arial';
