@@ -38,7 +38,7 @@
     <div id="gameOverScreen">
         <h1>Game Over!</h1>
         <p id="finalScore">Pontuação: 0</p>
-        <button onclick="resetGame()">Reiniciar</button>
+        <button id="restartButton">Reiniciar</button>
     </div>
 
     <script>
@@ -47,6 +47,7 @@
             const ctx = canvas.getContext('2d');
             const gameOverScreen = document.getElementById('gameOverScreen');
             const finalScore = document.getElementById('finalScore');
+            const restartButton = document.getElementById('restartButton');
 
             const ITEM_SIZE = 20;
             const BORDER_MARGIN = ITEM_SIZE / 2;
@@ -186,7 +187,6 @@
             }
 
             function resetGame() {
-                gameOverScreen.style.display = 'none';
                 player = {
                     x: 200,
                     y: 200,
@@ -195,10 +195,12 @@
                     dx: 0,
                     dy: 0
                 };
-                generatePizza();
+                pizza = { x: 100, y: 100, size: ITEM_SIZE };
                 score = 0;
                 gameSpeed = 60;
                 gameStarted = true;
+                gameOverScreen.style.display = 'none';
+                clearInterval(gameLoop);
                 gameLoop = setInterval(drawGame, gameSpeed);
             }
 
@@ -240,50 +242,4 @@
             function handleTouchStart(e) {
                 e.preventDefault();
                 if (!gameStarted) {
-                    gameStarted = true;
-                    return;
-                }
-                touchStartX = e.touches[0].clientX;
-                touchStartY = e.touches[0].clientY;
-            }
-
-            function handleTouchMove(e) {
-                e.preventDefault();
-                if (!touchStartX || !touchStartY) {
-                    return;
-                }
-
-                let touchEndX = e.touches[0].clientX;
-                let touchEndY = e.touches[0].clientY;
-
-                let dx = touchEndX - touchStartX;
-                let dy = touchEndY - touchStartY;
-
-                if (Math.abs(dx) > Math.abs(dy)) {
-                    // Movimento orizzontale
-                    player.dx = dx > 0 ? 2 : -2;
-                    player.dy = 0;
-                } else {
-                    // Movimento verticale
-                    player.dx = 0;
-                    player.dy = dy > 0 ? 2 : -2;
-                }
-
-                touchStartX = touchEndX;
-                touchStartY = touchEndY;
-            }
-
-            function validateScore() {
-                // Implementa controlli di integrità qui
-                if (score !== player.body.length - 1) {
-                    console.error("Score validation failed!");
-                    alert("Si è verificato un problema con il punteggio. Il gioco verrà resettato.");
-                    resetGame();
-                }
-            }
-
-            resetGame();
-        })();
-    </script>
-</body>
-</html>
+                    gameStarted
