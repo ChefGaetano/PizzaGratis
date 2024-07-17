@@ -69,6 +69,12 @@
 
         restartButton.addEventListener('click', resetGame);
 
+        // Caricamento degli effetti sonori
+        const eatSound = new Audio('eat.mp3');
+        const bgMusic = new Audio('background.mp3');
+        bgMusic.loop = true; // Ripete la musica di sottofondo
+        bgMusic.play();
+
         function drawGame() {
             ctx.clearRect(0, 0, c.width, c.height);
 
@@ -77,26 +83,13 @@
                 return;
             }
 
-            // Disegna la bandiera italiana (corpo del giocatore)
+            // Disegna il giocatore utilizzando emoji
+            ctx.font = `${s}px Arial`;
             p.bd.forEach((seg, idx) => {
-                ctx.fillStyle = '#009C3B'; // Verde
-                ctx.fillRect(seg.x - s / 2, seg.y - s / 2, s, s);
-                ctx.fillStyle = '#FFDF00'; // Giallo
-                ctx.beginPath();
-                ctx.moveTo(seg.x, seg.y - s / 4);
-                ctx.lineTo(seg.x + s / 2, seg.y);
-                ctx.lineTo(seg.x, seg.y + s / 4);
-                ctx.lineTo(seg.x - s / 2, seg.y);
-                ctx.closePath();
-                ctx.fill();
-                ctx.fillStyle = '#002776'; // Blu
-                ctx.beginPath();
-                ctx.arc(seg.x, seg.y, s / 4, 0, 2 * Math.PI);
-                ctx.fill();
+                ctx.fillText('🇧🇷', seg.x - s / 2, seg.y + s / 2);
             });
 
-            // Disegna la pizza
-            ctx.font = `${s}px Arial`;
+            // Disegna la pizza utilizzando emoji
             ctx.fillText('🍕', food.x - s / 2, food.y + s / 2);
 
             ctx.fillStyle = 'black';
@@ -147,10 +140,18 @@
             const dist = Math.sqrt(Math.pow(p.x - food.x, 2) + Math.pow(p.y - food.y, 2));
             if (dist < s) {
                 sc++;
+                eatSound.play(); // Riproduci il suono di mangiare
                 if (sc > hs) {
                     hs = sc;
                 }
-                p.bd.push({...p.bd[p.bd.length - 1]});
+                // Aumenta di 2 unità
+                for (let i = 0; i < 2; i++) {
+                    p.bd.push({...p.bd[p.bd.length - 1]});
+                }
+                // Ogni 10 pizze, aggiungi una bandiera italiana
+                if (sc % 10 === 0) {
+                    p.bd.push({...p.bd[p.bd.length - 1], isItalian: true});
+                }
                 generatePizza();
                 increaseSpeed();
             }
