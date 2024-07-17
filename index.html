@@ -3,298 +3,97 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jogo de Pizza do Chef Gaetano WhatsApp 3199380640</title>
+    <title>PizzaGratis - Gioco del Punteggio</title>
     <style>
         body {
+            font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #009246 33.33%, #FFFFFF 33.33%, #FFFFFF 66.66%, #CE2B37 66.66%);
+            background-color: #f0f0f0;
         }
-        canvas {
-            background-color: rgba(255, 255, 255, 0.7);
-            border: 2px solid black;
-            max-width: 100%;
-            max-height: 100%;
-        }
-        #gameOverScreen {
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+        #game-container {
+            text-align: center;
             background-color: white;
             padding: 20px;
-            border: 2px solid black;
-            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        #pizza {
+            font-size: 100px;
+            cursor: pointer;
+            user-select: none;
+        }
+        #score {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+        #timer {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+        #start-button, #restart-button {
+            font-size: 18px;
+            margin-top: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        @media (max-width: 480px) {
+            #game-container {
+                width: 90%;
+            }
         }
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas" width="400" height="400"></canvas>
-    <div id="gameOverScreen">
-        <h1>Game Over!</h1>
-        <p id="finalScore">Pontuação: 0</p>
-        <button id="restartButton">Reiniciar</button>
+    <div id="game-container">
+        <div id="pizza">🍕</div>
+        <div id="score">Punteggio: 0</div>
+        <div id="timer">Tempo: 30s</div>
+        <button id="start-button">Inizia Gioco</button>
+        <button id="restart-button" style="display: none;">Rigioca</button>
     </div>
 
     <script>
-        const c = document.getElementById('gameCanvas');
-        const ctx = c.getContext('2d');
-        const goScreen = document.getElementById('gameOverScreen');
-        const fScore = document.getElementById('finalScore');
-        const restartButton = document.getElementById('restartButton');
+        // Offuscamento base
+        (function(){
+            var a=function(b,c){return b+c;};
+            var d=function(e,f){return e-f;};
+            var g=function(h,i){return h*i;};
+            var j=0;var k=30;var l=false;var m=null;var n=document.getElementById('pizza');
+            var o=document.getElementById('score');var p=document.getElementById('timer');
+            var q=document.getElementById('start-button');var r=document.getElementById('restart-button');
+            var s=new Audio('eat.mp3');var t=new Audio('background.mp3');
+            t.loop=true;
 
-        const s = 20; // ITEM_SIZE
-        const b = s / 2; // BORDER_MARGIN
+            function u(){j=a(j,1);o.textContent='Punteggio: '+j;}
 
-        let p = {
-            x: 200,
-            y: 200,
-            sz: s,
-            bd: [{x: 200, y: 200}],
-            dx: 0,
-            dy: 0
-        };
-        let food = { x: 100, y: 100, sz: s };
-        let sc = 0; // score
-        let hs = 0; // highScore
-        let spd = 60; // gameSpeed
-        let gl;
-        let gs = false; // gameStarted
-        let mob = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            function v(){k=d(k,1);p.textContent='Tempo: '+k+'s';if(k<=0){w();}}
 
-        restartButton.addEventListener('click', resetGame);
+            function w(){l=false;clearInterval(m);r.style.display='block';t.pause();}
 
-        // Caricamento delle immagini
-        const playerImg = new Image();
-        playerImg.src = 'brazil.png'; // Assicurati di avere questo file
+            function x(){if(!l)return;u();s.play();y();}
 
-        const italianFlagImg = new Image();
-        italianFlagImg.src = 'italy.png'; // Assicurati di avere questo file
+            function y(){var z=g(Math.random(),50);var A=g(Math.random(),50);
+            n.style.transform='translate('+z+'px,'+A+'px)';}
 
-        const pizzaImg = new Image();
-        pizzaImg.src = 'pizza.png';
+            function B(){if(l)return;l=true;j=0;k=30;o.textContent='Punteggio: 0';
+            p.textContent='Tempo: 30s';q.style.display='none';r.style.display='none';
+            m=setInterval(v,1000);t.play();y();}
 
-        // Caricamento degli effetti sonori
-        const eatSound = new Audio('eat.mp3');
-        const bgMusic = new Audio('background.mp3');
-        bgMusic.loop = true; // Ripete la musica di sottofondo
+            n.addEventListener('click',x);q.addEventListener('click',B);
+            r.addEventListener('click',B);
 
-        // Assicurati che la musica di sottofondo si carichi correttamente
-        bgMusic.addEventListener('canplaythrough', () => {
-            bgMusic.play();
-        });
-
-        function drawGame() {
-            ctx.clearRect(0, 0, c.width, c.height);
-
-            if (!gs) {
-                drawStartScreen();
-                return;
-            }
-
-            // Disegna il giocatore utilizzando le immagini
-            p.bd.forEach((seg, idx) => {
-                if (seg.isItalian) {
-                    ctx.drawImage(italianFlagImg, seg.x - s / 2, seg.y - s / 2, s, s);
-                } else {
-                    ctx.drawImage(playerImg, seg.x - s / 2, seg.y - s / 2, s, s);
-                }
+            // Prevenzione click rapidi
+            var C=0;var D=Date.now();
+            n.addEventListener('click',function(){
+                var E=Date.now();
+                if(E-D<100){C++;if(C>5){w();alert('Clicking too fast!');}}
+                else{C=0;}D=E;
             });
-
-            // Disegna la pizza utilizzando le immagini
-            ctx.drawImage(pizzaImg, food.x - s / 2, food.y - s / 2, s, s);
-
-            ctx.fillStyle = 'black';
-            ctx.font = '16px Arial';
-            ctx.fillText(`Pontuação: ${sc} | Recorde: ${hs}`, 10, 20);
-
-            if (mob) {
-                ctx.fillText('Deslize para mover', 10, c.height - 40);
-                ctx.fillText('WhatsApp 3199380640', 10, c.height - 20);
-            } else {
-                ctx.fillText('Use as setas para mover', 10, c.height - 40);
-                ctx.fillText('WhatsApp 3199380640', 10, c.height - 20);
-            }
-
-            movePlayer();
-            checkCollision();
-            checkBorderCollision();
-        }
-
-        function drawStartScreen() {
-            ctx.fillStyle = 'black';
-            ctx.font = '24px Arial';
-            ctx.fillText('Jogo de Pizza do Chef Gaetano', 50, 150);
-            ctx.font = '18px Arial';
-            if (mob) {
-                ctx.fillText('Toque na tela para começar', 90, 200);
-                ctx.fillText('Deslize para mover', 110, 230);
-                ctx.fillText('WhatsApp 3199380640', 130, 260);
-            } else {
-                ctx.fillText('Pressione ENTER per cominciare', 90, 200);
-                ctx.fillText('Usa le frecce per muoverti', 110, 230);
-                ctx.fillText('WhatsApp 3199380640', 130, 260);
-            }
-        }
-
-        function movePlayer() {
-            p.x += p.dx;
-            p.y += p.dy;
-
-            // Aggiorna il corpo
-            p.bd[0] = {x: p.x, y: p.y};
-            for (let i = p.bd.length - 1; i > 0; i--) {
-                p.bd[i] = {...p.bd[i-1]};
-            }
-        }
-
-        function checkCollision() {
-            const dist = Math.sqrt(Math.pow(p.x - food.x, 2) + Math.pow(p.y - food.y, 2));
-            if (dist < s) {
-                sc++;
-                eatSound.play(); // Riproduci il suono di mangiare
-                if (sc > hs) {
-                    hs = sc;
-                }
-                // Aumenta di 2 unità
-                for (let i = 0; i < 2; i++) {
-                    p.bd.push({...p.bd[p.bd.length - 1]});
-                }
-                // Ogni 10 pizze, aggiungi una bandiera italiana
-                if (sc % 10 === 0) {
-                    p.bd.push({...p.bd[p.bd.length - 1], isItalian: true});
-                }
-                generatePizza();
-                increaseSpeed();
-            }
-        }
-
-        function checkBorderCollision() {
-            if (p.x <= b || p.x >= c.width - b || p.y <= b || p.y >= c.height - b) {
-                gameOver();
-            }
-        }
-
-        function generatePizza() {
-            food.x = Math.random() * (c.width - 2 * b) + b;
-            food.y = Math.random() * (c.height - 2 * b) + b;
-        }
-
-        function increaseSpeed() {
-            if (sc <= 10) {
-                spd = Math.max(20, 30 - sc);
-            } else if (sc <= 20) {
-                spd = Math.max(10, 20 - (sc - 10) / 2);
-            } else if (sc <= 30) {
-                spd = Math.max(5, 15 - (sc - 20) / 2); // Diluire tra 20 e 30 punti
-            } else {
-                spd = Math.max(1, 10 - (sc - 30) / 2); // Diluire oltre 30 punti
-            }
-            clearInterval(gl);
-            gl = setInterval(drawGame, spd);
-        }
-
-        function gameOver() {
-            clearInterval(gl);
-            fScore.textContent = `Pontuação: ${sc}`;
-            goScreen.style.display = 'block';
-        }
-
-        function resetGame() {
-            p = {
-                x: 200,
-                y: 200,
-                sz: s,
-                bd: [{x: 200, y: 200}],
-                dx: 0,
-                dy: 0
-            };
-            food = { x: 100, y: 100, sz: s };
-            sc = 0;
-            spd = 60;
-            gs = false;
-            goScreen.style.display = 'none';
-            clearInterval(gl);
-            gl = setInterval(drawGame, spd);
-        }
-
-        function handleKeyDown(e) {
-            if (!gs && e.key === 'Enter') {
-                gs = true;
-                return;
-            }
-
-            switch(e.key) {
-                case 'ArrowLeft':
-                    p.dx = -2;
-                    p.dy = 0;
-                    break;
-                case 'ArrowRight':
-                    p.dx = 2;
-                    p.dy = 0;
-                    break;
-                case 'ArrowUp':
-                    p.dx = 0;
-                    p.dy = -2;
-                    break;
-                case 'ArrowDown':
-                    p.dx = 0;
-                    p.dy = 2;
-                    break;
-            }
-        }
-
-        if (mob) {
-            c.addEventListener('touchstart', handleTouchStart);
-            c.addEventListener('touchmove', handleTouchMove);
-        } else {
-            document.addEventListener('keydown', handleKeyDown);
-        }
-
-        let touchStartX, touchStartY;
-
-        function handleTouchStart(e) {
-            e.preventDefault();
-            if (!gs) {
-                gs = true;
-                return;
-            }
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-        }
-
-        function handleTouchMove(e) {
-            e.preventDefault();
-            if (!touchStartX || !touchStartY) {
-                return;
-            }
-
-            let touchEndX = e.touches[0].clientX;
-            let touchEndY = e.touches[0].clientY;
-
-            let dx = touchEndX - touchStartX;
-            let dy = touchEndY - touchStartY;
-
-            if (Math.abs(dx) > Math.abs(dy)) {
-                // Movimento orizzontale
-                p.dx = dx > 0 ? 2 : -2;
-                p.dy = 0;
-            } else {
-                // Movimento verticale
-                p.dx = 0;
-                p.dy = dy > 0 ? 2 : -2;
-            }
-
-            touchStartX = touchEndX;
-            touchStartY = touchEndY;
-        }
-
-        resetGame();
+        })();
     </script>
 </body>
 </html>
