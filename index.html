@@ -73,7 +73,11 @@
         const eatSound = new Audio('eat.mp3');
         const bgMusic = new Audio('background.mp3');
         bgMusic.loop = true; // Ripete la musica di sottofondo
-        bgMusic.play();
+
+        // Assicurati che la musica di sottofondo si carichi correttamente
+        bgMusic.addEventListener('canplaythrough', () => {
+            bgMusic.play();
+        });
 
         function drawGame() {
             ctx.clearRect(0, 0, c.width, c.height);
