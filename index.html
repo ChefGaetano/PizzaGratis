@@ -87,13 +87,26 @@
                 return;
             }
 
-            // Disegna il giocatore utilizzando emoji
-            ctx.font = `${s}px Arial`;
+            // Disegna il giocatore utilizzando il codice della bandiera del Brasile
             p.bd.forEach((seg, idx) => {
-                ctx.fillText('🇧🇷', seg.x - s / 2, seg.y + s / 2);
+                ctx.fillStyle = '#009C3B'; // Verde
+                ctx.fillRect(seg.x - s / 2, seg.y - s / 2, s, s);
+                ctx.fillStyle = '#FFDF00'; // Giallo
+                ctx.beginPath();
+                ctx.moveTo(seg.x, seg.y - s / 4);
+                ctx.lineTo(seg.x + s / 2, seg.y);
+                ctx.lineTo(seg.x, seg.y + s / 4);
+                ctx.lineTo(seg.x - s / 2, seg.y);
+                ctx.closePath();
+                ctx.fill();
+                ctx.fillStyle = '#002776'; // Blu
+                ctx.beginPath();
+                ctx.arc(seg.x, seg.y, s / 4, 0, 2 * Math.PI);
+                ctx.fill();
             });
 
             // Disegna la pizza utilizzando emoji
+            ctx.font = `${s}px Arial`;
             ctx.fillText('🍕', food.x - s / 2, food.y + s / 2);
 
             ctx.fillStyle = 'black';
