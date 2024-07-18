@@ -38,6 +38,7 @@
     <div id="gameOverScreen">
         <h1>Game Over!</h1>
         <p id="finalScore">Pontuação: 0</p>
+        <p id="validationCode">Validation Code: 0</p>
         <button id="restartButton">Reiniciar</button>
     </div>
 
@@ -46,6 +47,7 @@
         const ctx = c.getContext('2d');
         const goScreen = document.getElementById('gameOverScreen');
         const fScore = document.getElementById('finalScore');
+        const vCode = document.getElementById('validationCode');
         const restartButton = document.getElementById('restartButton');
 
         const s = 20; // ITEM_SIZE
@@ -120,8 +122,6 @@
                 ctx.fillText('Use as setas para mover', 10, c.height - 40);
                 ctx.fillText('WhatsApp 3199380640', 10, c.height - 20);
             }
-
-            ctx.fillText(`Validation Code: ${generateValidationCode()}`, 10, 60);
 
             movePlayer();
             checkCollision();
@@ -207,6 +207,7 @@
         function gameOver() {
             clearInterval(gl);
             fScore.textContent = `Pontuação: ${p123}`;
+            vCode.textContent = `Validation Code: ${generateValidationCode()}`;
             goScreen.style.display = 'block';
         }
 
@@ -301,8 +302,22 @@
 
         function generateValidationCode() {
             let secret = 'ABC123'; // Un valore segreto conosciuto solo da te
-            let validationCode = btoa(`${p123}:${Date.now()}:${secret}`);
-            return validationCode;
+            let timestamp = Math.floor(Date.now() / 1000); // Timestamp in secondi
+            let code = `${p123}${timestamp}${secret}`;
+            let hash = btoa(code).substr(0, 20); // Hash di 20 caratteri
+            return hash;
+        }
+
+        function verifyValidationCode(validationCode, score) {
+            let timestamp = Math.floor(Date.now() / 1000); // Timestamp in secondi
+            for (let i = 0; i < 600; i++) { // Controlla gli ultimi 10 minuti
+                let code = `${score}${timestamp - i}ABC123`;
+                let hash = btoa(code).substr(0, 20);
+                if (hash === validationCode) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         resetGame();
