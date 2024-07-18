@@ -1,3 +1,6 @@
+from jsmin import jsmin
+
+html_code = """
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -325,3 +328,14 @@
     </script>
 </body>
 </html>
+"""
+
+# Offuscare il codice
+offuscato = jsmin(html_code)
+
+# Salvare il codice offuscato in un file
+output_file_path = "/mnt/data/index_offuscato.html"
+with open(output_file_path, "w") as f:
+    f.write(offuscato)
+
+output_file_path &#8203;:citation[oaicite:0]{index=0}&#8203;
